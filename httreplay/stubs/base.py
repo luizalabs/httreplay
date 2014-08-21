@@ -71,6 +71,9 @@ class ReplayConnectionHelper:
         self.__request['_headers'][header] = val
         return self._baseclass.putheader(self, header, *values)
 
+    def sort_parameters(self, key):
+        return '&'.join(sorted(key.split('&')))
+
     def endheaders(self, message_body=None):
         self.__socket_del()
         # If a key generator for the URL is provided, use it.
@@ -103,6 +106,12 @@ class ReplayConnectionHelper:
             body_key = self._replay_settings.body_key(body_content)
         else:
             body_key = body_content
+
+        if body_key:
+            body_key = self.sort_parameters(body_key)
+
+        if url_key:
+            url_key = self.sort_parameters(url_key)
 
         self.__request.update(dict(
             # method already present
