@@ -72,7 +72,16 @@ class ReplayConnectionHelper:
         return self._baseclass.putheader(self, header, *values)
 
     def sort_parameters(self, key):
-        return '&'.join(sorted(key.split('&')))
+        path = ''
+        if '?' in key:
+            key_components = key.split('?')
+            path = key_components[0]
+            key = key_components[1]
+        return '{}{}{}'.format(
+            path,
+            '?' if path else '',
+            '&'.join(sorted(key.split('&')))
+        )
 
     def endheaders(self, message_body=None):
         self.__socket_del()
